@@ -1,8 +1,19 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe;
+
+if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else {
+  // eslint-disable-next-line no-console
+  console.warn('STRIPE_SECRET_KEY missing or invalid; checkout will fail until configured.');
+}
 const Order = require('../models/Order');
 
 const createCheckoutSession = async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(503).json({ success: false, message: 'Stripe is not configured on the server.' });
+    }
+
     const { items, totalAmount } = req.body;
 
     if (!items || !items.length || totalAmount == null) {

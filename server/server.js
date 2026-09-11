@@ -1,20 +1,39 @@
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const stripeRoutes = require('./routes/stripeRoutes');
+const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
 
 const app = express();
 
-app.use(cors());
+// Allow frontend origin explicitly for cookies/headers if needed
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(express.json());
+
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/stripe', stripeRoutes);
+
+// Health
 app.get('/api/health', (req, res) => {
-  res.json({
-    message: 'ShopEase API is running',
-  });
+  res.json({ message: 'ShopEase API is running' });
 });
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

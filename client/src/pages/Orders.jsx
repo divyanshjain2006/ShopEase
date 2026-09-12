@@ -6,6 +6,7 @@ import { clearCart, selectCartTotal, selectCartItems, setCartItems } from '../re
 import api from '../services/api';
 import Loader from '../components/Loader';
 
+
 export default function Orders() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,37 +60,58 @@ export default function Orders() {
         <Link to="/login" style={styles.primaryBtn}>Log in</Link>
       </div>
     );
-  }
-
-  return (
+  }  return (
     <div style={styles.wrap}>
       <div style={styles.header}>
         <h1 style={styles.title}>My orders</h1>
-        {orders.length > 0 && <p style={styles.subtitle}>{orders.length} order{orders.length !== 1 ? 's' : ''}</p>}
+        {orders.length > 0 && (
+          <p style={styles.subtitle}>
+            {orders.length} order{orders.length !== 1 ? 's' : ''} placed
+          </p>
+        )}
       </div>
 
       {error && (
         <div style={styles.errorBox}>
-          <p>{error}</p>
-          <button type="button" onClick={fetchOrders} style={styles.retryBtn}>Retry</button>
+          <span style={styles.errorIcon}>⚠</span>
+          <span style={styles.errorText}>{error}</span>
+          <button type="button" onClick={fetchOrders} style={styles.retryBtn}>
+            Retry
+          </button>
         </div>
       )}
 
       {loading ? (
-        <div style={styles.loading}><Loader /></div>
+        <div style={styles.loading}>
+          <Loader size={48} />
+        </div>
       ) : !orders.length ? (
         <div style={styles.empty}>
+          <span style={styles.emptyIcon}>📦</span>
           <p style={styles.emptyText}>You haven't placed any orders yet.</p>
+          <p style={styles.emptySubtext}>When you complete a purchase, it will appear here.</p>
           <Link to="/products" style={styles.primaryBtn}>Browse products</Link>
         </div>
       ) : (
         <div style={styles.list}>
-          {orders.map((order) => (
-            <div key={order._id} style={styles.card}>
+          {orders.map((order, index) => (
+            <div
+              key={order._id}
+              style={{
+                ...styles.card,
+                animation: `fadeInUp 0.3s ease ${index * 0.05}s both`,
+              }}
+            >
               <div style={styles.cardTop}>
                 <div>
                   <p style={styles.orderId}>Order #{order._id.slice(-8)}</p>
-                  <p style={styles.orderDate}>{new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p style={styles.orderDate}>
+                    {new Date(order.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </p>
                 </div>
                 <span
                   style={{
@@ -123,7 +145,9 @@ export default function Orders() {
 
               <div style={styles.cardBottom}>
                 <span style={styles.total}>${order.totalAmount.toFixed(2)}</span>
-                <Link to={`/orders/${order._id}`} style={styles.viewBtn}>View details</Link>
+                <Link to={`/orders/${order._id}`} style={styles.viewBtn}>
+                  View details
+                </Link>
               </div>
             </div>
           ))}
@@ -140,17 +164,18 @@ const styles = {
     padding: '24px 20px',
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   title: {
     margin: 0,
-    fontSize: 26,
+    fontSize: 'clamp(24px, 4vw, 32px)',
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
   },
   subtitle: {
-    margin: '4px 0 0',
+    margin: '6px 0 0',
     color: '#6b6375',
+    fontSize: 14,
   },
   center: {
     display: 'flex',
@@ -166,67 +191,91 @@ const styles = {
     margin: 0,
   },
   primaryBtn: {
-    marginTop: 8,
+    marginTop: 12,
     display: 'inline-block',
     background: '#aa3bff',
     color: '#fff',
     textDecoration: 'none',
-    padding: '10px 18px',
+    padding: '10px 20px',
     borderRadius: 8,
     fontWeight: 600,
+    fontSize: 14,
+    transition: 'all 0.2s ease',
   },
   loading: {
-    padding: 60,
+    padding: 80,
     display: 'flex',
     justifyContent: 'center',
   },
   errorBox: {
     padding: 14,
     border: '1px solid #f5c6c6',
-    borderRadius: 8,
+    borderRadius: 10,
     background: '#fef2f2',
     color: '#b91c1c',
-    marginBottom: 16,
+    marginBottom: 20,
     display: 'flex',
-    gap: 8,
+    gap: 10,
     alignItems: 'center',
+    fontSize: 14,
+  },
+  errorIcon: {
+    fontSize: 16,
+  },
+  errorText: {
+    flex: 1,
   },
   retryBtn: {
     background: '#b91c1c',
     color: '#fff',
     border: 'none',
-    padding: '6px 12px',
+    padding: '8px 14px',
     borderRadius: 6,
     cursor: 'pointer',
     fontSize: 13,
+    fontWeight: 600,
   },
   empty: {
-    padding: 40,
+    padding: 60,
     border: '1px dashed #e5e4e7',
-    borderRadius: 8,
+    borderRadius: 12,
     textAlign: 'center',
+    background: '#fafafa',
+  },
+  emptyIcon: {
+    fontSize: 56,
+    display: 'block',
+    marginBottom: 16,
   },
   emptyText: {
     color: '#6b6375',
-    margin: 0,
+    fontSize: 16,
+    margin: '0 0 6px',
+  },
+  emptySubtext: {
+    color: '#6b6375',
+    fontSize: 14,
+    margin: '0 0 20px',
+    fontStyle: 'italic',
   },
   list: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 12,
+    gap: 14,
   },
   card: {
     border: '1px solid #e5e4e7',
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: 12,
+    padding: 16,
     background: '#fff',
+    transition: 'box-shadow 0.2s ease',
   },
   cardTop: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     gap: 12,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   orderId: {
     margin: 0,
@@ -235,12 +284,12 @@ const styles = {
     fontSize: 15,
   },
   orderDate: {
-    margin: '2px 0 0',
+    margin: '3px 0 0',
     color: '#6b6375',
     fontSize: 13,
   },
   status: {
-    padding: '4px 10px',
+    padding: '5px 12px',
     borderRadius: 20,
     fontSize: 12,
     fontWeight: 600,
@@ -250,19 +299,20 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   itemChip: {
     background: '#f4f3ec',
     borderRadius: 16,
-    padding: '2px 10px',
+    padding: '4px 10px',
     fontSize: 12,
     color: '#6b6375',
+    fontWeight: 500,
   },
   moreChip: {
     background: '#e5e4e7',
     borderRadius: 16,
-    padding: '2px 10px',
+    padding: '4px 10px',
     fontSize: 12,
     color: '#6b6375',
     fontWeight: 600,
@@ -271,18 +321,23 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 10,
+    paddingTop: 12,
     borderTop: '1px solid #e5e4e7',
+    marginTop: 4,
   },
   total: {
     fontWeight: 700,
-    fontSize: 16,
+    fontSize: 18,
     color: 'var(--text-h, #08060d)',
   },
   viewBtn: {
     color: '#aa3bff',
     textDecoration: 'none',
     fontWeight: 600,
-    fontSize: 13,
+    fontSize: 14,
+    padding: '8px 12px',
+    border: '1px solid #aa3bff',
+    borderRadius: 6,
+    transition: 'all 0.2s ease',
   },
 };

@@ -1,10 +1,45 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { setAuth, setError, clearError } from '../redux/authSlice';
 import { saveAuth } from '../services/api';
 import api from '../services/api';
 import Loader from '../components/Loader';
+
+const EyeIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+);
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -15,6 +50,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState('');
 
   const redirect = new URLSearchParams(search).get('redirect') || '/';
@@ -59,10 +95,20 @@ export default function Register() {
   return (
     <div style={styles.wrap}>
       <div style={styles.card}>
-        <h1 style={styles.title}>Create your account</h1>
-        <p style={styles.subtitle}>Start shopping with ShopEase</p>
+        <div style={styles.cardHeader}>
+          <h1 style={styles.title}>Create your account</h1>
+          <p style={styles.subtitle}>Start shopping with ShopEase</p>
+        </div>
 
         <form onSubmit={handleSubmit} style={styles.form}>
+          {formError && (
+            <div style={styles.errorBox}>
+              <span style={styles.errorIcon}>⚠</span>
+              <span style={styles.errorText}>{formError}</span>
+            </div>
+          )
+          }
+
           <label style={styles.label}>
             Name
             <input
@@ -72,6 +118,7 @@ export default function Register() {
               style={styles.input}
               placeholder="Your name"
               required
+              autoComplete="name"
             />
           </label>
 
@@ -84,19 +131,32 @@ export default function Register() {
               style={styles.input}
               placeholder="you@example.com"
               required
+              autoComplete="email"
             />
           </label>
 
           <label style={styles.label}>
             Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
-              placeholder="Min 6 characters"
-              required
-            />
+            <div style={styles.inputWrap}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={styles.input}
+                placeholder="Min 6 characters"
+                required
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                style={styles.toggleBtn}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
           </label>
 
           <label style={styles.label}>
@@ -108,12 +168,9 @@ export default function Register() {
               style={styles.input}
               placeholder="Repeat password"
               required
+              autoComplete="new-password"
             />
           </label>
-
-          {(formError || useSelector((s) => s.auth).error) && (
-            <p style={styles.errorText}>{formError || useSelector((s) => s.auth).error}</p>
-          )}
 
           <button
             type="submit"
@@ -121,6 +178,7 @@ export default function Register() {
             style={{
               ...styles.submitBtn,
               opacity: loading ? 0.6 : 1,
+              cursor: loading ? 'wait' : 'pointer',
             }}
           >
             {loading ? <Loader size={20} /> : 'Create account'}
@@ -128,7 +186,10 @@ export default function Register() {
         </form>
 
         <p style={styles.footer}>
-          Already have an account? <Link to="/login" style={styles.link}>Log in</Link>
+          Already have an account?{' '}
+          <Link to="/login" style={styles.link}>
+            Log in
+          </Link>
         </p>
       </div>
     </div>
@@ -142,75 +203,114 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
+    background: 'linear-gradient(135deg, #f4f3ec 0%, #e5e4e7 100%)',
   },
   card: {
     width: '100%',
     maxWidth: 420,
     background: '#fff',
-    border: '1px solid #e5e4e7',
-    borderRadius: 12,
-    padding: 28,
-    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+    borderRadius: 16,
+    padding: 32,
+    boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
+  },
+  cardHeader: {
+    textAlign: 'center',
+    marginBottom: 24,
+    paddingBottom: 24,
+    borderBottom: '1px solid #e5e4e7',
   },
   title: {
     margin: 0,
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
-    textAlign: 'center',
   },
   subtitle: {
-    margin: '6px 0 20px',
-    textAlign: 'center',
+    margin: '6px 0 0',
     color: '#6b6375',
+    fontSize: 14,
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 12,
+    gap: 16,
   },
   label: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 4,
+    gap: 6,
     fontSize: 13,
     fontWeight: 600,
     color: '#6b6375',
   },
-  input: {
-    padding: '10px 12px',
-    border: '1px solid #e5e4e7',
-    borderRadius: 8,
-    fontSize: 14,
-    background: '#fff',
+  inputWrap: {
+    position: 'relative',
+    display: 'inline-block',
+    width: '100%',
   },
-  errorText: {
-    color: '#b91c1c',
-    fontSize: 13,
-    margin: 0,
-    background: '#fef2f2',
-    padding: '6px 10px',
+  input: {
+    padding: '12px 14px',
+    border: '1px solid #e5e4e7',
+    borderRadius: 10,
+    fontSize: 15,
+    background: '#fafafa',
+    width: '100%',
+    boxSizing: 'border-box',
+    transition: 'all 0.2s ease',
+  },
+  toggleBtn: {
+    position: 'absolute',
+    right: 8,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    padding: 6,
+    color: '#6b6375',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 6,
+    transition: 'all 0.2s ease',
+  },
+  errorBox: {
+    padding: '10px 14px',
+    background: '#fef2f2',
+    border: '1px solid #fecaca',
+    borderRadius: 8,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    color: '#b91c1c',
+    fontSize: 14,
+    fontWeight: 500,
+  },
+  errorIcon: {
+    fontSize: 16,
   },
   submitBtn: {
-    marginTop: 4,
-    padding: '12px',
+    marginTop: 8,
+    padding: '14px',
     background: '#aa3bff',
     color: '#fff',
     border: 'none',
-    borderRadius: 8,
+    borderRadius: 10,
     fontWeight: 700,
     fontSize: 15,
     cursor: 'pointer',
+    transition: 'all 0.2s ease',
   },
   footer: {
-    margin: '16px 0 0',
+    margin: '20px 0 0',
     textAlign: 'center',
     color: '#6b6375',
+    fontSize: 14,
   },
   link: {
     color: '#aa3bff',
     textDecoration: 'none',
     fontWeight: 600,
+    transition: 'color 0.2s ease',
   },
 };

@@ -1,36 +1,60 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
+import { Link } from 'react-router-dom';
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch();
   const [added, setAdded] = useState(false);
+  const [hover, setHover] = useState(false);
 
   const handleAdd = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     dispatch(addToCart(product));
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
 
   const stockLabel = product.stock > 0 ? (product.stock < 5 ? 'Low stock' : 'In stock') : 'Out of stock';
+  const isOutOfStock = product.stock === 0;
 
   return (
-    <article style={styles.card}>
-      <div style={styles.imageWrap}>
-        <img
-          src={product.image || 'https://placehold.co/300x300/e5e4e7/6b6375?text=No+Image'}
-          alt={product.name}
-          style={styles.image}
-          onError={(e) => {
-            e.target.src = 'https://placehold.co/300x300/e5e4e7/6b6375?text=No+Image';
-          }}
-        />
-      </div>
+    <article
+      style={{
+        ...styles.card,
+        transform: hover ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: hover ? '0 12px 24px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
+        borderColor: hover ? '#d1d0d9' : '#e5e4e7',
+      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <Link to={`/products/${product._id}`} style={styles.imageLink}>
+        <div style={styles.imageWrap}>
+          <img
+            src={product.image || 'https://placehold.co/300x300/e5e4e7/6b6375?text=No+Image'}
+            alt={product.name}
+            style={{
+              ...styles.image,
+              transform: hover ? 'scale(1.05)' : 'scale(1)',
+              transition: 'transform 0.3s ease',
+            }}
+            onError={(e) => {
+              e.target.src = 'https://placehold.co/300x300/e5e4e7/6b6375?text=No+Image';
+            }}
+          />
+          {isOutOfStock && (
+            <div style={styles.outOfStockOverlay}>
+              <span style={styles.outOfStockText}>Out of stock</span>
+            </div>
+          )}
+        </div>
+      </Link>
       <div style={styles.body}>
         <div style={styles.meta}>
           <span style={styles.category}>{product.category}</span>
-          <span style={{ ...styles.stock, color: product.stock === 0 ? '#b91c1c' : '#6b6375' }}>
+          <span style={{ ...styles.stock, color: isOutOfStock ? '#b91c1c' : '#6b6375' }}>
             {stockLabel}
           </span>
         </div>
@@ -42,95 +66,132 @@ export default function ProductCard({ product }) {
         <button
           type="button"
           onClick={handleAdd}
-          disabled={product.stock === 0 || added}
+          disabled={isOutOfStock || added}
           style={{
             ...styles.addBtn,
-            opacity: product.stock === 0 ? 0.5 : 1,
-            background: added ? '#059669' : '#aa3bff',
+            opacity: isOutOfStock ? 0.5 : added ? 1 : 1,
+            background: added ? '#059669' : isOutOfStock ? '#e5e4e7' : '#aa3bff',
+            cursor: isOutOfStock ? 'not-allowed' : 'pointer',
           }}
         >
-          {added ? 'Added to cart' : product.stock === 0 ? 'Out of stock' : 'Add to cart'}
+          {added ? '✓ Added' : isOutOfStock ? 'Unavailable' : 'Add to cart'}
         </button>
       </div>
     </article>
   );
 }
 
-import { Link } from 'react-router-dom';
-
 const styles = {
   card: {
     border: '1px solid #e5e4e7',
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: 'hidden',
     background: '#fff',
     display: 'flex',
     flexDirection: 'column',
+    transition: 'all 0.3s ease',
+  },
+  imageLink: {
+    textDecoration: 'none',
+    display: 'block',
   },
   imageWrap: {
     background: '#f4f3ec',
-    height: 180,
+    height: 200,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    position: 'relative',
   },
   image: {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
+    transition: 'transform 0.3s ease',
+  },
+  outOfStockOverlay: {
+    position: 'absolute',
+    inset: 0,
+    background: 'rgba(255,255,255,0.85)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  outOfStockText: {
+    fontWeight: 700,
+    color: '#b91c1c',
+    fontSize: 14,
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
   },
   body: {
-    padding: 12,
+    padding: 14,
     display: 'flex',
     flexDirection: 'column',
-    gap: 6,
+    gap: 8,
     flex: 1,
   },
   meta: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 8,
   },
   category: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#6b6375',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
+    fontWeight: 600,
+    background: '#f4f3ec',
+    padding: '2px 8px',
+    borderRadius: 4,
   },
   stock: {
     fontSize: 12,
+    fontWeight: 500,
   },
   titleLink: {
     textDecoration: 'none',
     color: 'inherit',
+    display: 'block',
   },
   title: {
     margin: 0,
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: 700,
     color: 'var(--text-h, #08060d)',
+    lineHeight: 1.3,
   },
   price: {
     fontWeight: 700,
-    fontSize: 18,
+    fontSize: 20,
     color: '#aa3bff',
     margin: 0,
+    letterSpacing: '-0.5px',
   },
   desc: {
     margin: 0,
     fontSize: 13,
     color: '#6b6375',
-    lineHeight: 1.4,
+    lineHeight: 1.5,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
   },
   addBtn: {
-    marginTop: 'auto',
-    padding: '10px',
+    marginTop: 8,
+    padding: '10px 16px',
     border: 'none',
-    borderRadius: 6,
+    borderRadius: 8,
     color: '#fff',
     fontWeight: 600,
     cursor: 'pointer',
     fontSize: 14,
+    transition: 'all 0.2s ease',
+    width: '100%',
+    textAlign: 'center',
   },
 };

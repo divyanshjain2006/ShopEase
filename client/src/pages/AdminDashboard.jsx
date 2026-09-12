@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Loader from '../components/Loader';
 
+
 export default function AdminDashboard() {
   const { isAuthenticated, user } = useSelector((s) => s.auth);
   const navigate = useNavigate();
@@ -129,14 +130,19 @@ export default function AdminDashboard() {
   return (
     <div style={styles.wrap}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Admin dashboard</h1>
-        <p style={styles.subtitle}>Manage products and orders</p>
+        <div style={styles.headerContent}>
+          <h1 style={styles.title}>Admin dashboard</h1>
+          <p style={styles.subtitle}>Manage products and orders</p>
+        </div>
       </div>
 
       {error && (
         <div style={styles.errorBox}>
-          <p>{error}</p>
-          <button type="button" onClick={fetchData} style={styles.retryBtn}>Retry</button>
+          <span style={styles.errorIcon}>⚠</span>
+          <span style={styles.errorText}>{error}</span>
+          <button type="button" onClick={fetchData} style={styles.retryBtn}>
+            Retry
+          </button>
         </div>
       )}
 
@@ -144,24 +150,41 @@ export default function AdminDashboard() {
         <button
           type="button"
           onClick={() => setActiveTab('products')}
-          style={{ ...styles.tab, background: activeTab === 'products' ? '#aa3bff' : '#fff', color: activeTab === 'products' ? '#fff' : 'var(--text-h, #08060d)' }}
+          style={{
+            ...styles.tab,
+            background: activeTab === 'products' ? '#aa3bff' : '#fff',
+            color: activeTab === 'products' ? '#fff' : 'var(--text-h, #08060d)',
+            border: activeTab === 'products' ? 'none' : '1px solid #e5e4e7',
+          }}
         >
-          Products ({products.length})
+          <span style={styles.tabIcon}>📦</span>
+          Products
+          <span style={styles.tabCount}>{products.length}</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('orders')}
-          style={{ ...styles.tab, background: activeTab === 'orders' ? '#aa3bff' : '#fff', color: activeTab === 'orders' ? '#fff' : 'var(--text-h, #08060d)' }}
+          style={{
+            ...styles.tab,
+            background: activeTab === 'orders' ? '#aa3bff' : '#fff',
+            color: activeTab === 'orders' ? '#fff' : 'var(--text-h, #08060d)',
+            border: activeTab === 'orders' ? 'none' : '1px solid #e5e4e7',
+          }}
         >
-          Orders ({orders.length})
+          <span style={styles.tabIcon}>🛒</span>
+          Orders
+          <span style={styles.tabCount}>{orders.length}</span>
         </button>
         <button type="button" onClick={() => setShowProductForm(true)} style={styles.addBtn}>
-          + Add product
+          <span style={styles.addBtnIcon}>+</span>
+          Add product
         </button>
       </div>
 
       {loading ? (
-        <div style={styles.loading}><Loader /></div>
+        <div style={styles.loading}>
+          <Loader size={48} />
+        </div>
       ) : activeTab === 'products' ? (
         <div style={styles.grid}>
           {products.map((p) => (
@@ -175,21 +198,49 @@ export default function AdminDashboard() {
                     e.target.src = 'https://placehold.co/120x120/e5e4e7/6b6375?text=No+Image';
                   }}
                 />
+                <div style={styles.stockBadge}>
+                  {p.stock === 0 ? (
+                    <span style={styles.stockBadgeText}>Out of stock</span>
+                  ) : (
+                    <span style={styles.stockBadgeText}>{p.stock} in stock</span>
+                  )}
+                </div>
               </div>
               <div style={styles.cardBody}>
                 <h3 style={styles.cardTitle}>{p.name}</h3>
-                <p style={styles.cardMeta}>{p.category} · ${p.price.toFixed(2)} · {p.stock} in stock</p>
+                <p style={styles.cardMeta}>
+                  {p.category} · ${p.price.toFixed(2)}
+                </p>
                 <div style={styles.cardActions}>
-                  <button type="button" onClick={() => { setEditingProduct(p); setShowProductForm(true); }} style={styles.editBtn}>Edit</button>
-                  <button type="button" onClick={() => handleDelete(p._id, p.name)} style={styles.deleteBtn}>Delete</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingProduct(p);
+                      setShowProductForm(true);
+                    }}
+                    style={styles.editBtn}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(p._id, p.name)}
+                    style={styles.deleteBtn}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
           ))}
           {!products.length && (
             <div style={styles.emptyBox}>
-              <p>No products yet. Add one to get started.</p>
-              <button type="button" onClick={() => fetchOrders()} style={styles.retryBtn}>Retry data</button>
+              <span style={styles.emptyIcon}>📦</span>
+              <p style={styles.emptyText}>No products yet.</p>
+              <p style={styles.emptySubtext}>Add your first product to get started.</p>
+              <button type="button" onClick={() => setShowProductForm(true)} style={styles.emptyActionBtn}>
+                Add product
+              </button>
             </div>
           )}
         </div>
@@ -200,21 +251,29 @@ export default function AdminDashboard() {
               <div style={styles.orderTop}>
                 <div>
                   <p style={styles.orderId}>Order #{o._id.slice(-8)}</p>
-                  <p style={styles.orderDate}>{new Date(o.createdAt).toLocaleDateString()}</p>
+                  <p style={styles.orderDate}>
+                    {new Date(o.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
                 </div>
-                <span style={{
-                  ...styles.statusBadge,
-                  background:
-                    o.status === 'Delivered' ? '#d1fae5' :
-                    o.status === 'Shipped' ? '#dbeafe' :
-                    o.status === 'Cancelled' ? '#fee2e2' :
-                    '#fef3c7',
-                  color:
-                    o.status === 'Delivered' ? '#065f46' :
-                    o.status === 'Shipped' ? '#1e3a8a' :
-                    o.status === 'Cancelled' ? '#991b1b' :
-                    '#92400e',
-                }}>
+                <span
+                  style={{
+                    ...styles.statusBadge,
+                    background:
+                      o.status === 'Delivered' ? '#d1fae5' :
+                      o.status === 'Shipped' ? '#dbeafe' :
+                      o.status === 'Cancelled' ? '#fee2e2' :
+                      '#fef3c7',
+                    color:
+                      o.status === 'Delivered' ? '#065f46' :
+                      o.status === 'Shipped' ? '#1e3a8a' :
+                      o.status === 'Cancelled' ? '#991b1b' :
+                      '#92400e',
+                  }}
+                >
                   {o.status}
                 </span>
               </div>
@@ -224,6 +283,9 @@ export default function AdminDashboard() {
                     {item.name} × {item.quantity}
                   </span>
                 ))}
+                {o.items.length > 3 && (
+                  <span style={styles.moreChip}>+{o.items.length - 3} more</span>
+                )}
               </div>
               <div style={styles.orderBottom}>
                 <span style={styles.total}>${o.totalAmount.toFixed(2)}</span>
@@ -242,7 +304,9 @@ export default function AdminDashboard() {
           ))}
           {!orders.length && (
             <div style={styles.emptyBox}>
-              <p>No orders yet.</p>
+              <span style={styles.emptyIcon}>🛒</span>
+              <p style={styles.emptyText}>No orders yet.</p>
+              <p style={styles.emptySubtext}>Orders will appear here when customers make purchases.</p>
             </div>
           )}
         </div>
@@ -251,30 +315,44 @@ export default function AdminDashboard() {
       {showProductForm && (
         <div style={styles.modalBackdrop}>
           <div style={styles.modal}>
-            <h2 style={styles.modalTitle}>{editingProduct ? 'Edit product' : 'Add product'}</h2>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>
+                {editingProduct ? 'Edit product' : 'Add new product'}
+              </h2>
+              <button
+                type="button"
+                onClick={resetForm}
+                style={styles.closeBtn}
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
+            </div>
             <form onSubmit={handleSubmit} style={styles.form}>
               <label style={styles.fieldLabel}>
-                Name
+                <span style={styles.fieldLabelText}>Product name</span>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   style={styles.input}
                   required
+                  placeholder="Enter product name"
                 />
               </label>
               <label style={styles.fieldLabel}>
-                Description
+                <span style={styles.fieldLabelText}>Description</span>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  style={{ ...styles.input, minHeight: 70 }}
+                  style={{ ...styles.input, minHeight: 80 }}
                   required
+                  placeholder="Describe the product"
                 />
               </label>
               <div style={styles.fieldRow}>
                 <label style={styles.fieldLabel}>
-                  Price
+                  <span style={styles.fieldLabelText}>Price ($)</span>
                   <input
                     type="number"
                     step="0.01"
@@ -283,10 +361,11 @@ export default function AdminDashboard() {
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
                     style={styles.input}
                     required
+                    placeholder="0.00"
                   />
                 </label>
                 <label style={styles.fieldLabel}>
-                  Category
+                  <span style={styles.fieldLabelText}>Category</span>
                   <input
                     type="text"
                     value={form.category}
@@ -299,7 +378,7 @@ export default function AdminDashboard() {
               </div>
               <div style={styles.fieldRow}>
                 <label style={styles.fieldLabel}>
-                  Stock
+                  <span style={styles.fieldLabelText}>Stock</span>
                   <input
                     type="number"
                     min="0"
@@ -307,21 +386,24 @@ export default function AdminDashboard() {
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     style={styles.input}
                     required
+                    placeholder="0"
                   />
                 </label>
                 <label style={styles.fieldLabel}>
-                  Image URL
+                  <span style={styles.fieldLabelText}>Image URL</span>
                   <input
                     type="url"
                     value={form.image}
                     onChange={(e) => setForm({ ...form, image: e.target.value })}
                     style={{ ...styles.input, flex: 2 }}
-                    placeholder="https://..."
+                    placeholder="https://example.com/image.jpg"
                   />
                 </label>
               </div>
               <div style={styles.formActions}>
-                <button type="button" onClick={resetForm} style={styles.cancelBtn}>Cancel</button>
+                <button type="button" onClick={resetForm} style={styles.cancelBtn}>
+                  Cancel
+                </button>
                 <button type="submit" style={styles.submitBtn}>
                   {editingProduct ? 'Update product' : 'Add product'}
                 </button>
@@ -343,17 +425,23 @@ const styles = {
     padding: '24px 20px',
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 24,
+  },
+  headerContent: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
   },
   title: {
     margin: 0,
-    fontSize: 26,
+    fontSize: 'clamp(24px, 4vw, 32px)',
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
   },
   subtitle: {
     margin: '4px 0 0',
     color: '#6b6375',
+    fontSize: 14,
   },
   center: {
     display: 'flex',
@@ -381,71 +469,104 @@ const styles = {
   errorBox: {
     padding: 14,
     border: '1px solid #f5c6c6',
-    borderRadius: 8,
+    borderRadius: 10,
     background: '#fef2f2',
     color: '#b91c1c',
-    marginBottom: 16,
+    marginBottom: 20,
     display: 'flex',
-    gap: 8,
+    gap: 10,
     alignItems: 'center',
+    fontSize: 14,
+  },
+  errorIcon: {
+    fontSize: 16,
+  },
+  errorText: {
+    flex: 1,
   },
   retryBtn: {
     background: '#b91c1c',
     color: '#fff',
     border: 'none',
-    padding: '6px 12px',
+    padding: '8px 14px',
     borderRadius: 6,
     cursor: 'pointer',
     fontSize: 13,
+    fontWeight: 600,
   },
   loading: {
-    padding: 60,
+    padding: 80,
     display: 'flex',
     justifyContent: 'center',
   },
   tabs: {
     display: 'flex',
     gap: 8,
-    marginBottom: 16,
-    padding: '4px',
+    marginBottom: 20,
+    padding: 4,
     border: '1px solid #e5e4e7',
-    borderRadius: 8,
+    borderRadius: 10,
     width: 'fit-content',
+    background: '#fafafa',
   },
   tab: {
-    padding: '8px 14px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '9px 14px',
     border: 'none',
-    borderRadius: 6,
+    borderRadius: 8,
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'all 0.2s ease',
+  },
+  tabIcon: {
+    fontSize: 16,
+  },
+  tabCount: {
+    background: 'rgba(0,0,0,0.08)',
+    padding: '2px 8px',
+    borderRadius: 10,
+    fontSize: 12,
+    fontWeight: 700,
   },
   addBtn: {
     marginLeft: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
     background: '#aa3bff',
     color: '#fff',
-    padding: '8px 14px',
+    padding: '9px 16px',
     border: 'none',
-    borderRadius: 6,
+    borderRadius: 8,
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'all 0.2s ease',
+  },
+  addBtnIcon: {
+    fontWeight: 700,
+    fontSize: 18,
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-    gap: 12,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+    gap: 16,
   },
   card: {
     border: '1px solid #e5e4e7',
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: 'hidden',
     background: '#fff',
     display: 'flex',
     flexDirection: 'column',
+    transition: 'box-shadow 0.2s ease',
   },
   imageWrap: {
-    height: 120,
+    position: 'relative',
+    height: 140,
     background: '#f4f3ec',
     overflow: 'hidden',
   },
@@ -453,38 +574,54 @@ const styles = {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
+    transition: 'transform 0.3s ease',
+  },
+  stockBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    padding: '4px 8px',
+    borderRadius: 4,
+    background: 'rgba(255,255,255,0.95)',
+    fontSize: 11,
+    fontWeight: 600,
+  },
+  stockBadgeText: {
+    color: '#6b6375',
   },
   cardBody: {
-    padding: 10,
+    padding: 12,
     display: 'flex',
     flexDirection: 'column',
-    gap: 4,
+    gap: 6,
     flex: 1,
   },
   cardTitle: {
     margin: 0,
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: 700,
     color: 'var(--text-h, #08060d)',
   },
   cardMeta: {
     margin: 0,
     color: '#6b6375',
     fontSize: 13,
+    fontWeight: 500,
   },
   cardActions: {
     display: 'flex',
     gap: 8,
-    marginTop: 6,
+    marginTop: 8,
   },
   editBtn: {
     background: '#fff',
     border: '1px solid #e5e4e7',
-    padding: '4px 10px',
+    padding: '6px 12px',
     borderRadius: 6,
     cursor: 'pointer',
     fontSize: 13,
     fontWeight: 600,
+    transition: 'all 0.2s ease',
   },
   deleteBtn: {
     background: 'none',
@@ -493,12 +630,44 @@ const styles = {
     cursor: 'pointer',
     fontSize: 13,
     fontWeight: 600,
+    padding: '6px 12px',
+    borderRadius: 6,
+    transition: 'background 0.2s ease',
   },
   emptyBox: {
-    padding: 40,
+    padding: 60,
     border: '1px dashed #e5e4e7',
-    borderRadius: 8,
+    borderRadius: 12,
     textAlign: 'center',
+    background: '#fafafa',
+    gridColumn: '1 / -1',
+  },
+  emptyIcon: {
+    fontSize: 48,
+    display: 'block',
+    marginBottom: 12,
+  },
+  emptyText: {
+    color: '#6b6375',
+    fontSize: 16,
+    margin: '0 0 6px',
+  },
+  emptySubtext: {
+    color: '#6b6375',
+    fontSize: 14,
+    margin: '0 0 16px',
+    fontStyle: 'italic',
+  },
+  emptyActionBtn: {
+    background: '#aa3bff',
+    color: '#fff',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: 8,
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: 14,
+    transition: 'background 0.2s ease',
   },
   orderList: {
     display: 'flex',
@@ -507,15 +676,17 @@ const styles = {
   },
   orderCard: {
     border: '1px solid #e5e4e7',
-    borderRadius: 10,
-    padding: 12,
+    borderRadius: 12,
+    padding: 16,
     background: '#fff',
+    transition: 'box-shadow 0.2s ease',
   },
   orderTop: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 10,
+    gap: 12,
   },
   orderId: {
     margin: 0,
@@ -523,13 +694,13 @@ const styles = {
     color: 'var(--text-h, #08060d)',
   },
   orderDate: {
-    margin: '2px 0 0',
+    margin: '3px 0 0',
     color: '#6b6375',
     fontSize: 13,
   },
   statusBadge: {
-    padding: '4px 10px',
-    borderRadius: 20,
+    padding: '5px 10px',
+    borderRadius: 16,
     fontSize: 12,
     fontWeight: 600,
     whiteSpace: 'nowrap',
@@ -538,39 +709,51 @@ const styles = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 6,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   itemChip: {
     background: '#f4f3ec',
     borderRadius: 16,
-    padding: '2px 10px',
+    padding: '4px 10px',
     fontSize: 12,
     color: '#6b6375',
+    fontWeight: 500,
+  },
+  moreChip: {
+    background: '#e5e4e7',
+    borderRadius: 16,
+    padding: '4px 10px',
+    fontSize: 12,
+    color: '#6b6375',
+    fontWeight: 600,
   },
   orderBottom: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 8,
+    paddingTop: 12,
     borderTop: '1px solid #e5e4e7',
+    gap: 12,
   },
   total: {
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
+    fontSize: 16,
   },
   statusSelect: {
-    padding: '6px 8px',
+    padding: '8px 10px',
     border: '1px solid #e5e4e7',
     borderRadius: 6,
-    background: '#fff',
+    background: '#fafafa',
     fontSize: 13,
     fontWeight: 600,
     cursor: 'pointer',
+    minWidth: 130,
   },
   modalBackdrop: {
     position: 'fixed',
     inset: 0,
-    background: 'rgba(0,0,0,0.4)',
+    background: 'rgba(0,0,0,0.5)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -579,38 +762,65 @@ const styles = {
   },
   modal: {
     background: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     maxWidth: 560,
     width: '100%',
-    padding: 20,
-    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+    maxHeight: '90vh',
+    overflow: 'auto',
+    padding: 28,
+    boxShadow: '0 24px 48px rgba(0,0,0,0.2)',
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 16,
+    borderBottom: '1px solid #e5e4e7',
   },
   modalTitle: {
     margin: 0,
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
-    marginBottom: 16,
+  },
+  closeBtn: {
+    width: 32,
+    height: 32,
+    border: 'none',
+    background: '#f4f3ec',
+    borderRadius: 8,
+    cursor: 'pointer',
+    fontSize: 16,
+    color: '#6b6375',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 12,
+    gap: 16,
   },
   fieldLabel: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 4,
+    gap: 6,
     fontSize: 13,
     fontWeight: 600,
     color: '#6b6375',
   },
+  fieldLabelText: {
+    fontWeight: 600,
+  },
   input: {
-    padding: '10px 12px',
+    padding: '11px 14px',
     border: '1px solid #e5e4e7',
-    borderRadius: 6,
-    fontSize: 14,
-    background: '#fff',
+    borderRadius: 8,
+    fontSize: 15,
+    background: '#fafafa',
+    transition: 'all 0.2s ease',
   },
   fieldRow: {
     display: 'flex',
@@ -620,26 +830,30 @@ const styles = {
   formActions: {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: 8,
+    gap: 10,
     marginTop: 8,
+    paddingTop: 12,
+    borderTop: '1px solid #e5e4e7',
   },
   cancelBtn: {
     background: '#fff',
     border: '1px solid #e5e4e7',
-    padding: '8px 14px',
-    borderRadius: 6,
+    padding: '10px 16px',
+    borderRadius: 8,
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'all 0.2s ease',
   },
   submitBtn: {
     background: '#aa3bff',
     color: '#fff',
     border: 'none',
-    padding: '8px 16px',
-    borderRadius: 6,
+    padding: '10px 20px',
+    borderRadius: 8,
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'all 0.2s ease',
   },
 };

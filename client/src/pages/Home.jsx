@@ -6,9 +6,9 @@ import api from '../services/api';
 import ProductCard from '../components/ProductCard';
 import Loader from '../components/Loader';
 
+
 export default function Home() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -20,14 +20,18 @@ export default function Home() {
   return (
     <>
       <section style={styles.hero}>
-        <div style={styles.heroInner}>
+        <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>Shop smarter, live better.</h1>
           <p style={styles.heroDesc}>
             Electronics, clothing, accessories and more — curated for you.
           </p>
           <div style={styles.heroCta}>
-            <Link to="/products" style={styles.primaryBtn}>Shop now</Link>
-            <Link to="/products?category=Electronics" style={styles.secondaryBtn}>Electronics</Link>
+            <Link to="/products" style={styles.primaryBtn}>
+              Shop now
+            </Link>
+            <Link to="/products?category=Electronics" style={styles.secondaryBtn}>
+              Electronics
+            </Link>
           </div>
         </div>
       </section>
@@ -38,17 +42,24 @@ export default function Home() {
         </div>
         <div style={styles.categories}>
           {['Electronics', 'Clothing', 'Footwear', 'Accessories'].map((cat) => (
-            <Link key={cat} to={`/products?category=${encodeURIComponent(cat)}`} style={styles.catCard}>
-              {cat}
+            <Link
+              key={cat}
+              to={`/products?category=${encodeURIComponent(cat)}`}
+              style={styles.catCard}
+            >
+              <span style={styles.catIcon}>✦</span>
+              <span style={styles.catName}>{cat}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section style={styles.section}>
+      <section style={{ ...styles.section, marginTop: 0 }}>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Featured products</h2>
-          <Link to="/products" style={styles.seeAll}>View all</Link>
+          <Link to="/products" style={styles.seeAll}>
+            View all
+          </Link>
         </div>
         <FeaturedProducts />
       </section>
@@ -57,7 +68,6 @@ export default function Home() {
 }
 
 function FeaturedProducts() {
-  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -83,16 +93,36 @@ function FeaturedProducts() {
   if (error) {
     return (
       <div style={styles.errorBox}>
-        <p>{error}</p>
-        <button type="button" onClick={() => window.location.reload()} style={styles.retryBtn}>Retry</button>
+        <p style={styles.errorText}>{error}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          style={styles.retryBtn}
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
-  if (loading) return <div style={styles.loadingRow}><Loader /></div>;
+  if (loading) {
+    return (
+      <div style={styles.loadingRow}>
+        <Loader size={48} />
+      </div>
+    );
+  }
 
   if (!products.length) {
-    return <p style={styles.empty}>No products yet.</p>;
+    return (
+      <div style={styles.emptyState}>
+        <span style={styles.emptyIcon}>📦</span>
+        <p style={styles.emptyText}>No products yet.</p>
+        <Link to="/admin" style={styles.emptyLink}>
+          Add products
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -109,23 +139,27 @@ const styles = {
     background: 'linear-gradient(135deg, #f4f3ec 0%, #e5e4e7 100%)',
     borderBottom: '1px solid #e5e4e7',
     padding: '80px 20px',
+    position: 'relative',
+    overflow: 'hidden',
   },
-  heroInner: {
+  heroContent: {
     maxWidth: 720,
     margin: '0 auto',
     textAlign: 'center',
   },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 'clamp(32px, 5vw, 48px)',
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
     margin: '0 0 12px',
     letterSpacing: '-0.5px',
+    lineHeight: 1.2,
   },
   heroDesc: {
-    fontSize: 18,
+    fontSize: '18px',
     color: '#6b6375',
     margin: '0 0 24px',
+    lineHeight: 1.6,
   },
   heroCta: {
     display: 'flex',
@@ -141,6 +175,8 @@ const styles = {
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 16,
+    transition: 'all 0.2s ease',
+    display: 'inline-block',
   },
   secondaryBtn: {
     border: '1px solid #e5e4e7',
@@ -150,6 +186,9 @@ const styles = {
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 16,
+    background: '#fff',
+    transition: 'all 0.2s ease',
+    display: 'inline-block',
   },
   section: {
     maxWidth: 1200,
@@ -160,12 +199,14 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: 16,
+    marginBottom: 20,
+    paddingBottom: 12,
+    borderBottom: '1px solid #e5e4e7',
   },
   sectionTitle: {
     margin: 0,
     fontSize: 24,
-    fontWeight: 600,
+    fontWeight: 700,
     color: 'var(--text-h, #08060d)',
   },
   seeAll: {
@@ -173,55 +214,95 @@ const styles = {
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'color 0.2s ease',
   },
   categories: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-    gap: 12,
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: 16,
   },
   catCard: {
     border: '1px solid #e5e4e7',
-    borderRadius: 8,
-    padding: '18px',
+    borderRadius: 12,
+    padding: '20px 16px',
     textAlign: 'center',
     textDecoration: 'none',
     color: 'var(--text-h, #08060d)',
+    background: '#fff',
+    transition: 'all 0.2s ease',
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 8,
+  },
+  catIcon: {
+    fontSize: 24,
+    color: '#aa3bff',
+  },
+  catName: {
     fontWeight: 600,
     fontSize: 15,
-    background: '#fff',
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-    gap: 16,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+    gap: 20,
   },
   errorBox: {
     padding: 20,
     border: '1px solid #f5c6c6',
-    borderRadius: 8,
+    borderRadius: 10,
     background: '#fef2f2',
     color: '#b91c1c',
     maxWidth: 400,
     margin: '20px auto',
     textAlign: 'center',
   },
+  errorText: {
+    margin: '0 0 12px',
+    fontSize: 14,
+  },
   retryBtn: {
     marginTop: 8,
     background: '#b91c1c',
     color: '#fff',
     border: 'none',
-    padding: '6px 12px',
+    padding: '8px 16px',
     borderRadius: 6,
     cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: 14,
   },
   loadingRow: {
-    padding: 40,
+    padding: 60,
     display: 'flex',
     justifyContent: 'center',
   },
-  empty: {
-    color: '#6b6375',
+  emptyState: {
+    padding: 60,
     textAlign: 'center',
-    padding: 40,
+    border: '1px dashed #e5e4e7',
+    borderRadius: 12,
+    background: '#fafafa',
+  },
+  emptyIcon: {
+    fontSize: 48,
+    display: 'block',
+    marginBottom: 12,
+  },
+  emptyText: {
+    color: '#6b6375',
+    fontSize: 16,
+    margin: '0 0 16px',
+  },
+  emptyLink: {
+    color: '#aa3bff',
+    textDecoration: 'none',
+    fontWeight: 600,
+    padding: '8px 16px',
+    border: '1px solid #aa3bff',
+    borderRadius: 6,
+    display: 'inline-block',
   },
 };

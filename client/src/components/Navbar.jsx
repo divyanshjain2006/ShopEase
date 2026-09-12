@@ -1,32 +1,69 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCartCount } from '../redux/cartSlice';
 import { logout, clearError } from '../redux/authSlice';
-
 export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user } = useSelector((s) => s.auth);
   const cartCount = useSelector(selectCartCount);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
+  const hamburgerRef = useRef(null);
+
   const handleLogout = () => {
     dispatch(logout());
+    setUserMenuOpen(false);
     navigate('/');
   };
 
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setUserMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function handleEscape(event) {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    }
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [mobileMenuOpen]);
+
   return (
-    <header style={styles.header}>
-      <nav style={styles.nav}>
-        <Link to="/" style={styles.logo}>
-          ShopEase
+    <header className="navbar-header">
+      <div className="navbar-inner">
+        <Link to="/" className="navbar-logo" aria-label="ShopEase home">
+          <span style={styles.logoIcon}>✦</span>
+          <span style={styles.logoText}>ShopEase</span>
         </Link>
 
-        <div style={styles.search}>
+        <div className="navbar-search navbar-search-desktop">
           <input
-            type="text"
-            id="search"
+            type="search"
+            className="navbar-search-input"
             placeholder="Search products…"
-            style={styles.searchInput}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 const value = e.target.value.trim();
@@ -38,9 +75,9 @@ export default function Navbar() {
           />
           <button
             type="button"
-            style={styles.searchBtn}
+            className="navbar-search-btn"
             onClick={() => {
-              const input = document.getElementById('search');
+              const input = document.querySelector('.navbar-search-input');
               const value = input?.value.trim();
               if (value) {
                 navigate(`/products?search=${encodeURIComponent(value)}`);
@@ -51,149 +88,182 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div style={styles.links}>
-          <Link to="/products" style={styles.link}>
-            Products
-          </Link>
+        <button
+          type="button"
+          className="navbar-hamburger"
+          ref={hamburgerRef}
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="navbar-mobile-menu"
+        >
+          <span className={`navbar-hamburger-bar ${mobileMenuOpen ? 'is-active' : ''}`} />
+          <span className={`navbar-hamburger-bar ${mobileMenuOpen ? 'is-active' : ''}`} />
+        </button>
 
-          {isAuthenticated ? (
-            <>
-              <Link to="/orders" style={styles.link}>
-                Orders
-              </Link>
-              {user?.role === 'admin' && (
-                <Link to="/admin" style={styles.link}>
-                  Admin
+        <div className={`navbar-links ${mobileMenuOpen ? 'is-open' : ''}`}>
+          <nav aria-label="Primary" className="navbar-links-list">
+            <Link to="/products" className="navbar-link" onClick={closeMobileMenu}>
+              Products
+            </Link>
+
+            {isAuthenticated ? (
+              <>
+                <Link to="/orders" className="navbar-link" onClick={closeMobileMenu}>
+                  Orders
                 </Link>
-              )}
-              <span style={styles.cartLink}>
-                <Link to="/cart" style={styles.link}>
+                {user?.role === 'admin' && (
+                  <Link to="/admin" className="navbar-link" onClick={closeMobileMenu}>
+                    Admin
+                  </Link>
+                )}
+                <Link to="/cart" className="navbar-link navbar-cart" onClick={closeMobileMenu}>
                   Cart
-                  {cartCount > 0 && <span style={styles.badge}>{cartCount}</span>}
+                  {cartCount > 0 && <span className="navbar-badge">{cartCount}</span>}
                 </Link>
-              </span>
-              <div style={styles.user}>
-                <span style={styles.username}>{user?.name}</span>
-                <button type="button" style={styles.btn} onClick={handleLogout}>
-                  Logout
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <Link to="/login" style={styles.link}>
-                Login
-              </Link>
-              <Link to="/register" style={styles.linkBtn}>
-                Register
-              </Link>
-            </>
-          )}
+                <div className="navbar-user" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    className="navbar-user-trigger"
+                    onClick={() => setUserMenuOpen((v) => !v)}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="true"
+                    aria-label={`Account menu for ${user?.name || 'user'}`}
+                  >
+                    <span className="navbar-user-avatar" aria-hidden="true" />
+                    <span className="navbar-user-name">{user?.name}</span>
+                  </button>
+                  {userMenuOpen && (
+                    <div className="navbar-user-menu" role="menu" aria-label="Account menu">
+                      <div className="navbar-user-menu-header">
+                        <span className="navbar-user-menu-name">{user?.name}</span>
+                        <span className="navbar-user-menu-email">{user?.email}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="navbar-user-menu-item navbar-user-menu-logout"
+                        onClick={handleLogout}
+                        role="menuitem"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="navbar-link" onClick={closeMobileMenu}>
+                  Login
+                </Link>
+                <Link to="/register" className="navbar-link navbar-cta" onClick={closeMobileMenu}>
+                  Register
+                </Link>
+              </>
+            )}
+          </nav>
         </div>
-      </nav>
+      </div>
+
+      {mobileMenuOpen && (
+        <div id="navbar-mobile-menu" className="navbar-mobile-panel" aria-label="Mobile navigation">
+          <div className="navbar-mobile-search">
+            <input
+              type="search"
+              className="navbar-search-input"
+              placeholder="Search products…"
+              autoFocus={false}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const value = e.target.value.trim();
+                  if (value) {
+                    navigate(`/products?search=${encodeURIComponent(value)}`);
+                    setMobileMenuOpen(false);
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              className="navbar-search-btn"
+              onClick={() => {
+                const input = document.querySelector('#navbar-mobile-menu .navbar-search-input');
+                const value = input?.value.trim();
+                if (value) {
+                  navigate(`/products?search=${encodeURIComponent(value)}`);
+                  setMobileMenuOpen(false);
+                }
+              }}
+            >
+              Search
+            </button>
+          </div>
+
+          <nav aria-label="Mobile primary" className="navbar-mobile-links">
+            <Link to="/products" className="navbar-link" onClick={closeMobileMenu}>
+              Products
+            </Link>
+
+            {isAuthenticated ? (
+              <>
+                <Link to="/orders" className="navbar-link" onClick={closeMobileMenu}>
+                  Orders
+                </Link>
+                {user?.role === 'admin' && (
+                  <Link to="/admin" className="navbar-link" onClick={closeMobileMenu}>
+                    Admin
+                  </Link>
+                )}
+                <Link to="/cart" className="navbar-link navbar-cart" onClick={closeMobileMenu}>
+                  Cart
+                  {cartCount > 0 && <span className="navbar-badge">{cartCount}</span>}
+                </Link>
+                <div className="navbar-mobile-user" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    className="navbar-user-trigger"
+                    onClick={() => setUserMenuOpen((v) => !v)}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="true"
+                    aria-label={`Account menu for ${user?.name || 'user'}`}
+                  >
+                    <span className="navbar-user-avatar" aria-hidden="true" />
+                    <span className="navbar-user-name">{user?.name}</span>
+                    <svg className="navbar-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                  {userMenuOpen && (
+                    <div className="navbar-user-menu navbar-user-menu-mobile" role="menu" aria-label="Account menu">
+                      <div className="navbar-user-menu-header">
+                        <span className="navbar-user-menu-name">{user?.name}</span>
+                        <span className="navbar-user-menu-email">{user?.email}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="navbar-user-menu-item navbar-user-menu-logout"
+                        onClick={handleLogout}
+                        role="menuitem"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="navbar-link" onClick={closeMobileMenu}>
+                  Login
+                </Link>
+                <Link to="/register" className="navbar-link navbar-cta" onClick={closeMobileMenu}>
+                  Register
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
-
-const styles = {
-  header: {
-    borderBottom: '1px solid #e5e4e7',
-    background: 'var(--bg, #fff)',
-    position: 'sticky',
-    top: 0,
-    zIndex: 50,
-  },
-  nav: {
-    maxWidth: 1200,
-    margin: '0 auto',
-    padding: '12px 20px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 16,
-    flexWrap: 'wrap',
-  },
-  logo: {
-    fontWeight: 700,
-    fontSize: 22,
-    color: 'var(--text-h, #08060d)',
-    textDecoration: 'none',
-  },
-  search: {
-    display: 'flex',
-    flex: 1,
-    minWidth: 220,
-    maxWidth: 420,
-  },
-  searchInput: {
-    flex: 1,
-    padding: '8px 12px',
-    border: '1px solid #e5e4e7',
-    borderRadius: 6,
-    fontSize: 14,
-  },
-  searchBtn: {
-    marginLeft: 8,
-    padding: '8px 12px',
-    border: '1px solid #e5e4e7',
-    borderRadius: 6,
-    background: '#fff',
-    cursor: 'pointer',
-    fontSize: 14,
-  },
-  links: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    flexWrap: 'wrap',
-  },
-  link: {
-    textDecoration: 'none',
-    color: 'var(--text-h, #08060d)',
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  linkBtn: {
-    textDecoration: 'none',
-    background: '#aa3bff',
-    color: '#fff',
-    padding: '6px 12px',
-    borderRadius: 6,
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  cartLink: {
-    position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    background: '#aa3bff',
-    color: '#fff',
-    borderRadius: '50%',
-    minWidth: 18,
-    height: 18,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 11,
-    fontWeight: 700,
-  },
-  username: {
-    fontSize: 14,
-    marginRight: 8,
-  },
-  user: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
-  btn: {
-    background: '#fff',
-    border: '1px solid #e5e4e7',
-    padding: '6px 12px',
-    borderRadius: 6,
-    cursor: 'pointer',
-    fontSize: 14,
-  },
-};

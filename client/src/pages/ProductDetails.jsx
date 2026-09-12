@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
-import { useSelector } from 'react-redux';
 import api from '../services/api';
 import Loader from '../components/Loader';
+
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -67,6 +67,11 @@ export default function ProductDetails() {
               e.target.src = 'https://placehold.co/400x400/e5e4e7/6b6375?text=No+Image';
             }}
           />
+          {product.stock === 0 && (
+            <div style={styles.outOfStockOverlay}>
+              <span style={styles.outOfStockText}>Out of stock</span>
+            </div>
+          )}
         </div>
 
         <div style={styles.details}>
@@ -74,34 +79,37 @@ export default function ProductDetails() {
           <h1 style={styles.title}>{product.name}</h1>
           <p style={styles.price}>${product.price.toFixed(2)}</p>
 
-          <p style={styles.desc}>{product.description}</p>
-
           <div style={styles.stockRow}>
-            <span style={styles.stockLabel}>Stock:</span>
-            <span style={{
-              color: product.stock === 0 ? '#b91c1c' : '#059669',
-              fontWeight: 600,
-            }}>
-              {product.stock === 0 ? 'Out of stock' : `${product.stock} available`}
+            <span style={styles.stockBadge}>
+              {product.stock === 0 ? (
+                <span style={styles.stockBadgeText}>Out of stock</span>
+              ) : (
+                <span style={styles.stockBadgeText}>
+                  {product.stock < 5 ? `${product.stock} left` : `${product.stock} available`}
+                </span>
+              )}
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={product.stock === 0 || added}
-            style={{
-              ...styles.addBtn,
-              background: added ? '#059669' : '#aa3bff',
-              opacity: product.stock === 0 ? 0.5 : 1,
-            }}
-          >
-            {added ? 'Added to cart' : product.stock === 0 ? 'Out of stock' : 'Add to cart'}
-          </button>
+          <p style={styles.desc}>{product.description}</p>
 
           <div style={styles.actions}>
-            <Link to="/products" style={styles.link}>
-              View all products
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={product.stock === 0 || added}
+              style={{
+                ...styles.addBtn,
+                background: added ? '#059669' : product.stock === 0 ? '#e5e4e7' : '#aa3bff',
+                color: added ? '#fff' : product.stock === 0 ? '#6b6375' : '#fff',
+                cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {added ? '✓ Added to cart' : product.stock === 0 ? 'Unavailable' : 'Add to cart'}
+            </button>
+
+            <Link to="/products" style={styles.secondaryLink}>
+              ← Back to products
             </Link>
           </div>
         </div>
@@ -117,91 +125,130 @@ const styles = {
     padding: '24px 20px',
   },
   backLink: {
-    display: 'inline-block',
-    marginBottom: 16,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 20,
     color: '#aa3bff',
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,
+    transition: 'color 0.2s ease',
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: 24,
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 28,
     alignItems: 'start',
   },
   imageWrap: {
+    position: 'relative',
     border: '1px solid #e5e4e7',
-    borderRadius: 10,
+    borderRadius: 14,
     overflow: 'hidden',
     background: '#f4f3ec',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
   },
   image: {
     width: '100%',
     display: 'block',
-    minHeight: 260,
+    minHeight: 300,
     objectFit: 'cover',
+    transition: 'transform 0.3s ease',
+  },
+  outOfStockOverlay: {
+    position: 'absolute',
+    inset: 0,
+    background: 'rgba(255,255,255,0.9)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  outOfStockText: {
+    fontWeight: 700,
+    color: '#b91c1c',
+    fontSize: 14,
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
   },
   details: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 12,
+    gap: 14,
   },
   category: {
-    fontSize: 12,
+    display: 'inline-block',
+    fontSize: 11,
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
     color: '#6b6375',
+    fontWeight: 600,
+    background: '#f4f3ec',
+    padding: '4px 10px',
+    borderRadius: 4,
   },
   title: {
     margin: 0,
-    fontSize: 26,
+    fontSize: 'clamp(24px, 4vw, 32px)',
     fontWeight: 700,
     color: 'var(--text-h, #08060d)',
+    lineHeight: 1.2,
   },
   price: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 700,
     color: '#aa3bff',
     margin: 0,
+    letterSpacing: '-1px',
+  },
+  stockRow: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  stockBadge: {
+    padding: '6px 12px',
+    borderRadius: 20,
+    background: 'var(--success-bg, #d1fae5)',
+  },
+  stockBadgeText: {
+    color: 'var(--success-text, #065f46)',
+    fontWeight: 600,
+    fontSize: 13,
   },
   desc: {
     margin: 0,
     color: '#6b6375',
-    lineHeight: 1.6,
-    fontSize: 15,
-  },
-  stockRow: {
-    display: 'flex',
-    gap: 8,
-    alignItems: 'center',
-  },
-  stockLabel: {
-    color: '#6b6375',
-  },
-  addBtn: {
-    padding: '12px 20px',
-    border: 'none',
-    borderRadius: 8,
-    color: '#fff',
-    fontWeight: 600,
-    cursor: 'pointer',
+    lineHeight: 1.7,
     fontSize: 15,
   },
   actions: {
-    marginTop: 8,
     display: 'flex',
     gap: 12,
     flexWrap: 'wrap',
+    marginTop: 4,
   },
-  link: {
+  addBtn: {
+    padding: '14px 24px',
+    border: 'none',
+    borderRadius: 10,
+    color: '#fff',
+    fontWeight: 700,
+    cursor: 'pointer',
+    fontSize: 15,
+    transition: 'all 0.2s ease',
+  },
+  secondaryLink: {
     color: '#6b6375',
     textDecoration: 'none',
     fontWeight: 500,
     fontSize: 14,
+    padding: '10px 16px',
+    border: '1px solid #e5e4e7',
+    borderRadius: 8,
+    transition: 'all 0.2s ease',
   },
   linkBtn: {
-    marginTop: 12,
+    marginTop: 8,
     display: 'inline-block',
     padding: '10px 18px',
     background: '#aa3bff',

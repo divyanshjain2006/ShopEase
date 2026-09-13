@@ -193,7 +193,7 @@ const styles = {
   },
   subtitle: {
     margin: '6px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   controls: {
@@ -227,7 +227,7 @@ const styles = {
     borderRadius: 6,
     cursor: 'pointer',
     fontSize: 14,
-    color: '#6b6375',
+    color: '#4a3f41',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -244,7 +244,7 @@ const styles = {
     flexDirection: 'column',
     gap: 6,
     fontSize: 13,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 500,
   },
   filterText: {
@@ -311,12 +311,12 @@ const styles = {
     marginBottom: 12,
   },
   emptyText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 16,
     margin: '0 0 8px',
   },
   emptySubtext: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
     margin: 0,
     fontStyle: 'italic',

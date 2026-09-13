@@ -1,0 +1,12 @@
+# Ethnic Threads
+
+Welcome to Ethnic Threads, your premium destination for exquisite custom stitched ethnic wear, designer blouses, and premium fabrics.
+
+## Navigation
+- [Home](/)
+- [Products](/products)
+- [Cart](/cart)
+- [Login](/login)
+- [Register](/register)
+
+Enjoy browsing our curated collection!

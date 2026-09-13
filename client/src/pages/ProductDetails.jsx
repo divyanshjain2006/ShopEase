@@ -61,7 +61,11 @@ export default function ProductDetails() {
         <div style={styles.imageWrap}>
           <img
             src={product.image || 'https://placehold.co/400x400/e5e4e7/6b6375?text=No+Image'}
-            alt={product.name}
+            alt="" /* Empty alt because the h1 title describes the product perfectly */
+            width="400"
+            height="400"
+            fetchpriority="high"
+            decoding="async"
             style={styles.image}
             onError={(e) => {
               e.target.src = 'https://placehold.co/400x400/e5e4e7/6b6375?text=No+Image';
@@ -101,7 +105,7 @@ export default function ProductDetails() {
               style={{
                 ...styles.addBtn,
                 background: added ? '#059669' : product.stock === 0 ? '#e5e4e7' : '#8b1a2b',
-                color: added ? '#fff' : product.stock === 0 ? '#6b6375' : '#fff',
+                color: added ? '#fff' : product.stock === 0 ? '#4a3f41' : '#fff',
                 cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
               }}
             >
@@ -190,7 +194,7 @@ const styles = {
     fontSize: 11,
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 600,
     background: '#f4f3ec',
     padding: '4px 10px',
@@ -226,7 +230,7 @@ const styles = {
   },
   desc: {
     margin: 0,
-    color: '#6b6375',
+    color: '#4a3f41',
     lineHeight: 1.7,
     fontSize: 15,
   },
@@ -247,7 +251,7 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   secondaryLink: {
-    color: '#6b5c5e',
+    color: '#4a3f41',
     textDecoration: 'none',
     fontWeight: 500,
     fontSize: 14,

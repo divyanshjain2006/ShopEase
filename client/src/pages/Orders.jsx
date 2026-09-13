@@ -174,7 +174,7 @@ const styles = {
   },
   subtitle: {
     margin: '6px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   center: {
@@ -187,7 +187,7 @@ const styles = {
     textAlign: 'center',
   },
   centerText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     margin: 0,
   },
   primaryBtn: {
@@ -248,12 +248,12 @@ const styles = {
     marginBottom: 16,
   },
   emptyText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 16,
     margin: '0 0 6px',
   },
   emptySubtext: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
     margin: '0 0 20px',
     fontStyle: 'italic',
@@ -285,7 +285,7 @@ const styles = {
   },
   orderDate: {
     margin: '3px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 13,
   },
   status: {
@@ -306,7 +306,7 @@ const styles = {
     borderRadius: 16,
     padding: '4px 10px',
     fontSize: 12,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 500,
   },
   moreChip: {
@@ -314,7 +314,7 @@ const styles = {
     borderRadius: 16,
     padding: '4px 10px',
     fontSize: 12,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 600,
   },
   cardBottom: {

@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
   /* Boutique Maroon / Gold palette */
-  --text: #6b5c5e;
+  --text: #4a3f41;
   --text-h: #2d1a1e;
   --bg: #fffaf5;
   --border: #e8d5c4;

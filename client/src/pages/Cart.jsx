@@ -176,7 +176,7 @@ const styles = {
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   center: {
@@ -192,7 +192,7 @@ const styles = {
     marginBottom: 16,
   },
   emptyText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 16,
     margin: '0 0 20px',
   },
@@ -249,7 +249,7 @@ const styles = {
   },
   itemPrice: {
     margin: '2px 0 10px',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 13,
   },
   controls: {
@@ -308,7 +308,7 @@ const styles = {
   },
   totalLabel: {
     fontSize: 11,
-    color: '#6b6375',
+    color: '#4a3f41',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
   },
@@ -320,7 +320,7 @@ const styles = {
   clearBtn: {
     background: 'none',
     border: 'none',
-    color: '#6b6375',
+    color: '#4a3f41',
     cursor: 'pointer',
     fontSize: 13,
     textDecoration: 'underline',
@@ -353,7 +353,7 @@ const styles = {
     padding: '8px 0',
   },
   summaryLabel: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   summaryValue: {
@@ -369,7 +369,7 @@ const styles = {
     background: '#fafafa',
   },
   authNoticeText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
     margin: '0 0 10px',
   },

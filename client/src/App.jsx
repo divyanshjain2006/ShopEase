@@ -50,7 +50,7 @@ function AppRoutes() {
   return (
     <>
       <Navbar />
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -92,7 +92,7 @@ function AppRoutes() {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </div>
+      </main>
     </>
   );
 }
@@ -116,7 +116,7 @@ const styles = {
     gap: 12,
   },
   loadingText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     margin: 0,
   },
 };

@@ -30,11 +30,15 @@ export default function ProductCard({ product }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <Link to={`/products/${product._id}`} style={styles.imageLink}>
+      <Link to={`/products/${product._id}`} style={styles.imageLink} aria-label={`View ${product.name}`}>
         <div style={styles.imageWrap}>
           <img
             src={product.image || 'https://placehold.co/300x300/e5e4e7/6b6375?text=No+Image'}
-            alt={product.name}
+            alt="" /* Empty alt to prevent screen readers from reading the same name twice */
+            width="300"
+            height="300"
+            loading="lazy"
+            decoding="async"
             style={{
               ...styles.image,
               transform: hover ? 'scale(1.05)' : 'scale(1)',
@@ -54,7 +58,7 @@ export default function ProductCard({ product }) {
       <div style={styles.body}>
         <div style={styles.meta}>
           <span style={styles.category}>{product.category}</span>
-          <span style={{ ...styles.stock, color: isOutOfStock ? '#b91c1c' : '#6b6375' }}>
+          <span style={{ ...styles.stock, color: isOutOfStock ? '#b91c1c' : '#4a3f41' }}>
             {stockLabel}
           </span>
         </div>
@@ -140,7 +144,7 @@ const styles = {
   },
   category: {
     fontSize: 11,
-    color: '#6b6375',
+    color: '#4a3f41',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
     fontWeight: 600,
@@ -174,7 +178,7 @@ const styles = {
   desc: {
     margin: 0,
     fontSize: 13,
-    color: '#6b6375',
+    color: '#4a3f41',
     lineHeight: 1.5,
     display: '-webkit-box',
     WebkitLineClamp: 2,

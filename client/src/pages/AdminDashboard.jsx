@@ -440,7 +440,7 @@ const styles = {
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   center: {
@@ -587,7 +587,7 @@ const styles = {
     fontWeight: 600,
   },
   stockBadgeText: {
-    color: '#6b6375',
+    color: '#4a3f41',
   },
   cardBody: {
     padding: 12,
@@ -604,7 +604,7 @@ const styles = {
   },
   cardMeta: {
     margin: 0,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 13,
     fontWeight: 500,
   },
@@ -648,12 +648,12 @@ const styles = {
     marginBottom: 12,
   },
   emptyText: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 16,
     margin: '0 0 6px',
   },
   emptySubtext: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
     margin: '0 0 16px',
     fontStyle: 'italic',
@@ -695,7 +695,7 @@ const styles = {
   },
   orderDate: {
     margin: '3px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 13,
   },
   statusBadge: {
@@ -716,7 +716,7 @@ const styles = {
     borderRadius: 16,
     padding: '4px 10px',
     fontSize: 12,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 500,
   },
   moreChip: {
@@ -724,7 +724,7 @@ const styles = {
     borderRadius: 16,
     padding: '4px 10px',
     fontSize: 12,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontWeight: 600,
   },
   orderBottom: {
@@ -792,7 +792,7 @@ const styles = {
     borderRadius: 8,
     cursor: 'pointer',
     fontSize: 16,
-    color: '#6b6375',
+    color: '#4a3f41',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -809,7 +809,7 @@ const styles = {
     gap: 6,
     fontSize: 13,
     fontWeight: 600,
-    color: '#6b6375',
+    color: '#4a3f41',
   },
   fieldLabelText: {
     fontWeight: 600,

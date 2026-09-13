@@ -221,7 +221,7 @@ const styles = {
   },
   itemMeta: {
     margin: '2px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 13,
   },
   itemPrice: {
@@ -248,7 +248,7 @@ const styles = {
     padding: '8px 0',
   },
   infoLabel: {
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   infoValue: {
@@ -277,7 +277,7 @@ const styles = {
   },
   cancelNote: {
     margin: 0,
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 12,
     textAlign: 'center',
     fontStyle: 'italic',

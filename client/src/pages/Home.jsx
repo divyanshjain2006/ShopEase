@@ -10,12 +10,7 @@ import Loader from '../components/Loader';
 export default function Home() {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    api
-      .get('/products')
-      .then(() => dispatch(setCartItems([])))
-      .catch(() => {});
-  }, [dispatch]);
+
 
   return (
     <>
@@ -311,7 +306,7 @@ const styles = {
   },
   catDesc: {
     fontSize: 12,
-    color: '#6b5c5e',
+    color: '#4a3f41',
     fontWeight: 400,
   },
   grid: {
@@ -397,7 +392,7 @@ const styles = {
     marginBottom: 12,
   },
   emptyText: {
-    color: '#6b5c5e',
+    color: '#4a3f41',
     fontSize: 16,
     margin: '0 0 16px',
   },

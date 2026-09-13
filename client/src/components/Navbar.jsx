@@ -101,10 +101,14 @@ export default function Navbar() {
         >
           <span className={`navbar-hamburger-bar ${mobileMenuOpen ? 'is-active' : ''}`} />
           <span className={`navbar-hamburger-bar ${mobileMenuOpen ? 'is-active' : ''}`} />
+          <span className={`navbar-hamburger-bar ${mobileMenuOpen ? 'is-active' : ''}`} />
         </button>
 
-        <div className={`navbar-links ${mobileMenuOpen ? 'is-open' : ''}`}>
+        <div className="navbar-links">
           <nav aria-label="Primary" className="navbar-links-list">
+            <Link to="/" className="navbar-link" onClick={closeMobileMenu}>
+              Home
+            </Link>
             <Link to="/products" className="navbar-link" onClick={closeMobileMenu}>
               Products
             </Link>
@@ -202,6 +206,9 @@ export default function Navbar() {
           </div>
 
           <nav aria-label="Mobile primary" className="navbar-mobile-links">
+            <Link to="/" className="navbar-link" onClick={closeMobileMenu}>
+              Home
+            </Link>
             <Link to="/products" className="navbar-link" onClick={closeMobileMenu}>
               Products
             </Link>

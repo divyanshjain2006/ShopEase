@@ -227,7 +227,7 @@ const styles = {
   },
   subtitle: {
     margin: '6px 0 0',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   form: {
@@ -241,7 +241,7 @@ const styles = {
     gap: 6,
     fontSize: 13,
     fontWeight: 600,
-    color: '#6b6375',
+    color: '#4a3f41',
   },
   inputWrap: {
     position: 'relative',
@@ -267,7 +267,7 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     padding: 6,
-    color: '#6b6375',
+    color: '#4a3f41',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -304,7 +304,7 @@ const styles = {
   footer: {
     margin: '20px 0 0',
     textAlign: 'center',
-    color: '#6b6375',
+    color: '#4a3f41',
     fontSize: 14,
   },
   link: {

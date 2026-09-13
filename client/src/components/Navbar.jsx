@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCartCount } from '../redux/cartSlice';
 import { logout, clearError } from '../redux/authSlice';
+import './Navbar.css';
+
 export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,16 +56,16 @@ export default function Navbar() {
   return (
     <header className="navbar-header">
       <div className="navbar-inner">
-        <Link to="/" className="navbar-logo" aria-label="ShopEase home">
-          <span style={styles.logoIcon}>✦</span>
-          <span style={styles.logoText}>ShopEase</span>
+        <Link to="/" className="navbar-logo" aria-label="Ethnic Threads home">
+          <span className="logo-icon">🪡</span>
+          <span className="logo-text">Ethnic Threads</span>
         </Link>
 
         <div className="navbar-search navbar-search-desktop">
           <input
             type="search"
             className="navbar-search-input"
-            placeholder="Search products…"
+            placeholder="Search blouses, fabrics…"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 const value = e.target.value.trim();

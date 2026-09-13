@@ -13,7 +13,7 @@ export default function Loader({ size = 40 }) {
           width: size,
           height: size,
           border: '4px solid #e5e4e7',
-          borderTop: '4px solid #aa3bff',
+          borderTop: '4px solid #8b1a2b',
           borderRadius: '50%',
           animation: 'spin 0.8s linear infinite',
         }}

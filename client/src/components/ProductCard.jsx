@@ -61,7 +61,7 @@ export default function ProductCard({ product }) {
         <Link to={`/products/${product._id}`} style={styles.titleLink}>
           <h3 style={styles.title}>{product.name}</h3>
         </Link>
-        <p style={styles.price}>${product.price.toFixed(2)}</p>
+        <p style={styles.price}>₹{product.price.toFixed(2)}</p>
         <p style={styles.desc}>{product.description}</p>
         <button
           type="button"
@@ -70,7 +70,7 @@ export default function ProductCard({ product }) {
           style={{
             ...styles.addBtn,
             opacity: isOutOfStock ? 0.5 : added ? 1 : 1,
-            background: added ? '#059669' : isOutOfStock ? '#e5e4e7' : '#aa3bff',
+            background: added ? '#059669' : isOutOfStock ? '#e5e4e7' : '#8b1a2b',
             cursor: isOutOfStock ? 'not-allowed' : 'pointer',
           }}
         >
@@ -167,7 +167,7 @@ const styles = {
   price: {
     fontWeight: 700,
     fontSize: 20,
-    color: '#aa3bff',
+    color: '#8b1a2b',
     margin: 0,
     letterSpacing: '-0.5px',
   },

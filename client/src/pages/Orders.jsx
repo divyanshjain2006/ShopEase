@@ -193,7 +193,7 @@ const styles = {
   primaryBtn: {
     marginTop: 12,
     display: 'inline-block',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     textDecoration: 'none',
     padding: '10px 20px',
@@ -331,12 +331,12 @@ const styles = {
     color: 'var(--text-h, #08060d)',
   },
   viewBtn: {
-    color: '#aa3bff',
+    color: '#8b1a2b',
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,
     padding: '8px 12px',
-    border: '1px solid #aa3bff',
+    border: '1px solid #8b1a2b',
     borderRadius: 6,
     transition: 'all 0.2s ease',
   },

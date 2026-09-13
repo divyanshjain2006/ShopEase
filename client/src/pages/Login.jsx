@@ -88,7 +88,7 @@ export default function Login() {
       <div style={styles.card}>
         <div style={styles.cardHeader}>
           <h1 style={styles.title}>Welcome back</h1>
-          <p style={styles.subtitle}>Log in to your ShopEase account</p>
+          <p style={styles.subtitle}>Log in to your Ethnic Threads account</p>
         </div>
 
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -167,7 +167,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
-    background: 'linear-gradient(135deg, #f4f3ec 0%, #e5e4e7 100%)',
+    background: 'linear-gradient(135deg, #faf0e6 0%, #e8d5c4 100%)',
   },
   card: {
     width: '100%',
@@ -256,7 +256,7 @@ const styles = {
   submitBtn: {
     marginTop: 8,
     padding: '14px',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     border: 'none',
     borderRadius: 10,
@@ -272,7 +272,7 @@ const styles = {
     fontSize: 14,
   },
   link: {
-    color: '#aa3bff',
+    color: '#8b1a2b',
     textDecoration: 'none',
     fontWeight: 600,
     transition: 'color 0.2s ease',

@@ -30,26 +30,9 @@ export default function Cart() {
     }
     if (!items.length) return;
 
-    try {
-      const payload = {
-        items: items.map((i) => ({
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-          image: i.image,
-        })),
-        totalAmount: total,
-      };
-      const res = await api.post('/stripe/create-checkout-session', payload);
-      if (res.data.url) {
-        window.location.href = res.data.url;
-      } else {
-        alert('Unable to start checkout. Please try again.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Checkout failed. Please try again.');
-    }
+    alert('Checkout successful! (Simulated)');
+    dispatch(clearCart());
+    navigate('/');
   };
 
   if (!items.length) {
@@ -146,7 +129,7 @@ export default function Cart() {
           </div>
           <div style={{ ...styles.summaryRow, borderTop: '1px solid #e5e4e7', paddingTop: 10 }}>
             <span style={{ ...styles.summaryLabel, fontWeight: 700 }}>Total</span>
-            <span style={{ ...styles.summaryValue, fontWeight: 700, color: '#aa3bff', fontSize: 18 }}>
+            <span style={{ ...styles.summaryValue, fontWeight: 700, color: '#8b1a2b', fontSize: 18 }}>
               ${total.toFixed(2)}
             </span>
           </div>
@@ -163,7 +146,7 @@ export default function Cart() {
               style={styles.checkoutBtn}
               disabled={items.length === 0}
             >
-              Checkout with Stripe (test)
+              Checkout (Simulated)
             </button>
           )}
 
@@ -392,7 +375,7 @@ const styles = {
   },
   primaryBtn: {
     display: 'inline-block',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     textDecoration: 'none',
     padding: '10px 20px',
@@ -405,7 +388,7 @@ const styles = {
     width: '100%',
     marginTop: 16,
     padding: '14px',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     border: 'none',
     borderRadius: 8,
@@ -418,7 +401,7 @@ const styles = {
     display: 'block',
     marginTop: 14,
     textAlign: 'center',
-    color: '#aa3bff',
+    color: '#8b1a2b',
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,

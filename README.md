@@ -1,4 +1,4 @@
-# ShopEase — E-commerce Web Application
+# Ethnic Threads — E-commerce Web Application
 
 A full-stack MERN e-commerce app built for a CSE internship project.
 

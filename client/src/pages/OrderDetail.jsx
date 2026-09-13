@@ -114,7 +114,7 @@ export default function OrderDetail() {
             </div>
             <div style={styles.infoRow}>
               <span style={styles.infoLabel}>Total</span>
-              <span style={{ ...styles.infoValue, fontWeight: 700, color: '#aa3bff', fontSize: 18 }}>
+              <span style={{ ...styles.infoValue, fontWeight: 700, color: '#8b1a2b', fontSize: 18 }}>
                 ${order.totalAmount.toFixed(2)}
               </span>
             </div>
@@ -151,7 +151,7 @@ const styles = {
     alignItems: 'center',
     gap: 6,
     marginBottom: 20,
-    color: '#aa3bff',
+    color: '#8b1a2b',
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,
@@ -299,7 +299,7 @@ const styles = {
     marginTop: 8,
     display: 'inline-block',
     padding: '10px 18px',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     textDecoration: 'none',
     borderRadius: 8,

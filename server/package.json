@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "ShopEase backend API",
+  "description": "Ethnic Threads backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -18,8 +18,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.10.0",
-    "@stripe/stripe-js": "^17.0.0"
+    "mongoose": "^9.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

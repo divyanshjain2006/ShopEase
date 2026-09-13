@@ -74,7 +74,7 @@ export default function AdminDashboard() {
       image: form.image.trim(),
     };
 
-    if (!payload.name || !payload.description || !payload.price || !payload.category) {
+    if (!payload.name || !payload.description || isNaN(payload.price) || !payload.category) {
       alert('Please fill in name, description, price and category');
       return;
     }
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
           onClick={() => setActiveTab('products')}
           style={{
             ...styles.tab,
-            background: activeTab === 'products' ? '#aa3bff' : '#fff',
+            background: activeTab === 'products' ? '#8b1a2b' : '#fff',
             color: activeTab === 'products' ? '#fff' : 'var(--text-h, #08060d)',
             border: activeTab === 'products' ? 'none' : '1px solid #e5e4e7',
           }}
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
           onClick={() => setActiveTab('orders')}
           style={{
             ...styles.tab,
-            background: activeTab === 'orders' ? '#aa3bff' : '#fff',
+            background: activeTab === 'orders' ? '#8b1a2b' : '#fff',
             color: activeTab === 'orders' ? '#fff' : 'var(--text-h, #08060d)',
             border: activeTab === 'orders' ? 'none' : '1px solid #e5e4e7',
           }}
@@ -458,7 +458,7 @@ const styles = {
   },
   linkBtn: {
     marginTop: 8,
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     border: 'none',
     padding: '10px 18px',
@@ -536,7 +536,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 6,
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     padding: '9px 16px',
     border: 'none',
@@ -659,7 +659,7 @@ const styles = {
     fontStyle: 'italic',
   },
   emptyActionBtn: {
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     border: 'none',
     padding: '10px 20px',
@@ -846,7 +846,7 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   submitBtn: {
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     border: 'none',
     padding: '10px 20px',

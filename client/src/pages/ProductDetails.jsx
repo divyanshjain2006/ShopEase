@@ -77,7 +77,7 @@ export default function ProductDetails() {
         <div style={styles.details}>
           <span style={styles.category}>{product.category}</span>
           <h1 style={styles.title}>{product.name}</h1>
-          <p style={styles.price}>${product.price.toFixed(2)}</p>
+          <p style={styles.price}>₹{product.price.toFixed(2)}</p>
 
           <div style={styles.stockRow}>
             <span style={styles.stockBadge}>
@@ -100,7 +100,7 @@ export default function ProductDetails() {
               disabled={product.stock === 0 || added}
               style={{
                 ...styles.addBtn,
-                background: added ? '#059669' : product.stock === 0 ? '#e5e4e7' : '#aa3bff',
+                background: added ? '#059669' : product.stock === 0 ? '#e5e4e7' : '#8b1a2b',
                 color: added ? '#fff' : product.stock === 0 ? '#6b6375' : '#fff',
                 cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
               }}
@@ -111,6 +111,15 @@ export default function ProductDetails() {
             <Link to="/products" style={styles.secondaryLink}>
               ← Back to products
             </Link>
+
+            <a
+              href={`https://wa.me/919999999999?text=Hi!%20I'm%20interested%20in%20${encodeURIComponent(product.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={styles.whatsappLink}
+            >
+              💬 Inquire on WhatsApp
+            </a>
           </div>
         </div>
       </div>
@@ -129,7 +138,7 @@ const styles = {
     alignItems: 'center',
     gap: 6,
     marginBottom: 20,
-    color: '#aa3bff',
+    color: '#8b1a2b',
     textDecoration: 'none',
     fontWeight: 600,
     fontSize: 14,
@@ -197,7 +206,7 @@ const styles = {
   price: {
     fontSize: 32,
     fontWeight: 700,
-    color: '#aa3bff',
+    color: '#8b1a2b',
     margin: 0,
     letterSpacing: '-1px',
   },
@@ -238,20 +247,34 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   secondaryLink: {
-    color: '#6b6375',
+    color: '#6b5c5e',
     textDecoration: 'none',
     fontWeight: 500,
     fontSize: 14,
     padding: '10px 16px',
-    border: '1px solid #e5e4e7',
+    border: '1px solid #e8d5c4',
     borderRadius: 8,
     transition: 'all 0.2s ease',
+  },
+  whatsappLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '12px 20px',
+    background: '#25D366',
+    color: '#fff',
+    textDecoration: 'none',
+    borderRadius: 8,
+    fontWeight: 600,
+    fontSize: 14,
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 8px rgba(37,211,102,0.25)',
   },
   linkBtn: {
     marginTop: 8,
     display: 'inline-block',
     padding: '10px 18px',
-    background: '#aa3bff',
+    background: '#8b1a2b',
     color: '#fff',
     textDecoration: 'none',
     borderRadius: 8,

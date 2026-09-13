@@ -324,8 +324,8 @@ const styles = {
   clearBtn: {
     marginTop: 12,
     background: '#fff',
-    border: '1px solid #aa3bff',
-    color: '#aa3bff',
+    border: '1px solid #8b1a2b',
+    color: '#8b1a2b',
     padding: '8px 16px',
     borderRadius: 8,
     cursor: 'pointer',

@@ -53,7 +53,9 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const redirect = new URLSearchParams(search).get('redirect') || '/';
+  const rawRedirect = new URLSearchParams(search).get('redirect') || '/';
+  // SEC-020: Prevent open redirect — only allow relative paths
+  const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
   if (token) {
     navigate(redirect, { replace: true });
@@ -72,8 +74,8 @@ export default function Register() {
       setFormError('Passwords do not match');
       return;
     }
-    if (password.length < 6) {
-      setFormError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setFormError('Password must be at least 8 characters');
       return;
     }
 

@@ -15,7 +15,7 @@ const router = express.Router();
 // Public
 router.get('/', getProducts);
 router.get('/categories', getCategories);
-router.get('/seed', adminMiddleware, seedProducts); // admin-only seed
+router.post('/seed', authMiddleware, adminMiddleware, seedProducts); // admin-only seed
 router.get('/:id', getProduct);
 
 // Admin

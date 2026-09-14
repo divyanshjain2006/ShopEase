@@ -1,19 +1,34 @@
 const Product = require('../models/Product');
 
+// SEC-006: Escape regex special characters to prevent ReDoS
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// SEC-021: Validate image URLs
+const isValidImageUrl = (url) => {
+  if (!url) return true;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 const getProducts = async (req, res) => {
   try {
     const { search, category, sort } = req.query;
 
     let query = {};
 
-    if (search) {
+    if (search && typeof search === 'string') {
+      const safeSearch = escapeRegex(search);
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+        { name: { $regex: safeSearch, $options: 'i' } },
+        { description: { $regex: safeSearch, $options: 'i' } },
       ];
     }
 
-    if (category && category !== 'all') {
+    if (category && category !== 'all' && typeof category === 'string') {
       query.category = category;
     }
 
@@ -25,7 +40,8 @@ const getProducts = async (req, res) => {
 
     res.json({ success: true, count: products.length, products });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Get products error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -39,7 +55,8 @@ const getProduct = async (req, res) => {
 
     res.json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Get product error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -49,6 +66,10 @@ const createProduct = async (req, res) => {
 
     if (!name || !description || !price || !category) {
       return res.status(400).json({ success: false, message: 'Please provide name, description, price and category' });
+    }
+
+    if (!isValidImageUrl(image)) {
+      return res.status(400).json({ success: false, message: 'Invalid image URL. Must be http or https.' });
     }
 
     const product = await Product.create({
@@ -62,7 +83,8 @@ const createProduct = async (req, res) => {
 
     res.status(201).json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Create product error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -74,15 +96,23 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
+    // SEC-004: Whitelist allowed fields to prevent mass assignment
+    const { name, description, price, category, stock, image } = req.body;
+
+    if (!isValidImageUrl(image)) {
+      return res.status(400).json({ success: false, message: 'Invalid image URL. Must be http or https.' });
+    }
+
     product = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { name, description, price, category, stock, image },
       { new: true, runValidators: true }
     );
 
     res.json({ success: true, product });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Update product error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -96,7 +126,8 @@ const deleteProduct = async (req, res) => {
 
     res.json({ success: true, message: 'Product removed' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Delete product error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -105,7 +136,8 @@ const getCategories = async (req, res) => {
     const categories = await Product.distinct('category');
     res.json({ success: true, categories });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Get categories error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -187,7 +219,8 @@ const seedProducts = async (req, res) => {
     await Product.insertMany(products);
     res.json({ success: true, message: `${products.length} products seeded` });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    console.error('Seed products error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 

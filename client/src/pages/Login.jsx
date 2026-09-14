@@ -52,7 +52,9 @@ export default function Login() {
   const [formError, setFormError] = useState('');
 
   const params = new URLSearchParams(search);
-  const redirect = params.get('redirect') || '/';
+  const rawRedirect = params.get('redirect') || '/';
+  // SEC-020: Prevent open redirect — only allow relative paths
+  const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
   if (token) {
     navigate(redirect, { replace: true });

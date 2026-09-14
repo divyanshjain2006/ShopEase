@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCartCount } from '../redux/cartSlice';
 import { logout, clearError } from '../redux/authSlice';
+import api from '../services/api';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -17,7 +18,12 @@ export default function Navbar() {
   const userMenuRef = useRef(null);
   const hamburgerRef = useRef(null);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (e) {
+      console.error('Logout failed:', e);
+    }
     dispatch(logout());
     setUserMenuOpen(false);
     navigate('/');

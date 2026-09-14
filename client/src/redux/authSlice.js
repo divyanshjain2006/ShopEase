@@ -37,7 +37,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem('shoppeasy_auth');
+      localStorage.removeItem('shoppease_auth');
     },
     setLoading(state, action) {
       state.loading = action.payload;
